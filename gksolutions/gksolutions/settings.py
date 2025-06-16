@@ -123,3 +123,10 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+ALLOWED_HOSTS = [
+    '113.161.65.217', # <-- Thêm địa chỉ IP này vào
+    '127.0.0.1',      # Luôn giữ localhost cho phát triển cục bộ
+    'localhost',      # Luôn giữ localhost cho phát triển cục bộ
+    # Nếu anh có tên miền, hãy thêm nó vào đây, ví dụ: 'yourdomain.com'
+]
