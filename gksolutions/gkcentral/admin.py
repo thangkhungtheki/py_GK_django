@@ -1,69 +1,23 @@
-
-
-# Register your models here.
+# admin.py
 from django.contrib import admin
-from django.db import models
-from django.forms import TextInput
-from django.utils.html import format_html
-from .models import ThietBi
+from .models import Site, Room, MaintenanceRecord
 
-class ThietBiAdmin(admin.ModelAdmin):
-    list_display = (
-        'ten_thiet_bi',
-        'ngay_nhap',
-        'ngay_het_han',
-        'don_vi_tinh',
-        'nguoi_nhap_display',
-        'ghi_chu_preview', # Thêm để xem trước ghi chú trên list
-        'id'
-    )
-    search_fields = (
-        'ten_thiet_bi',
-        'nguoi_nhap__username',
-        'don_vi_tinh',
-        'ghi_chu' # Có thể tìm kiếm trong ghi chú
-    )
-    # list_filter = (
-    #     'ngay_nhap',
-    #     'ngay_het_han',
-    #     'don_vi_tinh',
-    #     'nguoi_nhap'
-    # )
-    list_per_page = 25
+@admin.register(Site)
+class SiteAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'phone_number')
+    search_fields = ('name', 'address')
 
-    fields = (
-        'ten_thiet_bi',
-        'don_vi_tinh',
-        'ngay_nhap',
-        'ngay_het_han',
-        'nguoi_nhap_readonly',
-        'ghi_chu', # Thêm trường ghi chú vào đây
-    )
+@admin.register(Room)
+class RoomAdmin(admin.ModelAdmin):
+    list_display = ('site', 'room_number', 'room_type', 'capacity')
+    list_filter = ('site', 'room_type')
+    search_fields = ('room_number',)
+    raw_id_fields = ('site',) # Giúp chọn site dễ hơn nếu có nhiều site
 
-    readonly_fields = ('nguoi_nhap_readonly',)
-
-    def save_model(self, request, obj, form, change):
-        if not change and not obj.nguoi_nhap:
-            obj.nguoi_nhap = request.user
-        super().save_model(request, obj, form, change)
-
-    def nguoi_nhap_display(self, obj):
-        return obj.nguoi_nhap.username if obj.nguoi_nhap else 'N/A'
-    nguoi_nhap_display.short_description = "Người Nhập"
-
-    def nguoi_nhap_readonly(self, obj):
-        if obj.nguoi_nhap:
-            return obj.nguoi_nhap.username
-        return "N/A"
-    nguoi_nhap_readonly.short_description = "Người Nhập"
-
-    # --- Phương thức mới: Hiển thị một phần của ghi chú trên list_display ---
-    def ghi_chu_preview(self, obj):
-        if obj.ghi_chu:
-            # Hiển thị 50 ký tự đầu tiên và thêm '...' nếu dài hơn
-            return obj.ghi_chu[:50] + '...' if len(obj.ghi_chu) > 50 else obj.ghi_chu
-        return "Không có"
-    ghi_chu_preview.short_description = "Ghi Chú"
-
-# Đăng ký model với lớp Admin tùy chỉnh
-admin.site.register(ThietBi, ThietBiAdmin)
+@admin.register(MaintenanceRecord)
+class MaintenanceRecordAdmin(admin.ModelAdmin):
+    list_display = ('maintenance_date', 'site', 'room', 'description', 'cost', 'performed_by', 'recorded_by')
+    list_filter = ('maintenance_date', 'site', 'room', 'performed_by')
+    search_fields = ('description', 'performed_by', 'notes')
+    raw_id_fields = ('site', 'room', 'recorded_by') # Giúp chọn liên kết dễ hơn
+    date_hierarchy = 'maintenance_date' # Tạo bộ lọc theo ngày

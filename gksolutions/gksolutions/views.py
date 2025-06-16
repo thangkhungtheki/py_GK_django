@@ -1,4 +1,6 @@
 from django.http import HttpResponse
 
 def index(request):
-    return HttpResponse("Home page")
+    id = request.GET.get('id')
+    print(f"ID: {id}")
+    return HttpResponse(f"<h1>Welcome to GK Solutions ID: {id} </h1>")
