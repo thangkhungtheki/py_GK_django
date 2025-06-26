@@ -125,6 +125,10 @@ ALLOWED_HOSTS = [
     'localhost',      # Luôn giữ localhost cho phát triển cục bộ
     # Nếu anh có tên miền, hãy thêm nó vào đây, ví dụ: 'yourdomain.com'
 ]
+
+CSRF_TRUSTED_ORIGINS = ['http://113.161.65.217:9294', 'https://your_domain.com']
+
+
 import os
 
 STATIC_URL = '/static/'
